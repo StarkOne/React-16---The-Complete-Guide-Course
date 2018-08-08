@@ -5,36 +5,37 @@ import Person from "./Person/Person";
 class App extends Component {
   state = {
     persons: [
-      { name: "Vlad", age: 23},
-      { name: "Dasha", age: 22 },
-      { name: "Dina", age: 6 },
+      { id: 'asd3', name: "Vlad", age: 23},
+      { id: 'vhcfd1', name: "Dasha", age: 22 },
+      { id: 'hjf4', name: "Dina", age: 6 },
     ],
     otherState : "Some other value",
     showPersons: false
   }
 
-  switchNameHandler = (newName) => {
-    //console.log();
-    //this.state.persons[0].nane = "Vladislav";
-    //let test = this.state.persons[0].age + 1;
-    
-    this.setState(
-      {
-        persons: [
-          { name: newName, age: 23 }
-        ]
-      }
-    )
+  deletePersonHandler = (personIndex) => {
+    //const persons = this.state.persons.slice();
+    const persons = [...this.state.persons];
+    persons.splice(personIndex, 1);
+    this.setState({ persons: persons});
   }
 
-  nameChangedHandler = (event) => {
+  nameChangedHandler = (event, id) => {
+    const personIndex = this.state.persons.findIndex(p => {
+      return p.id === id;
+    });
+
+    const person = {
+      ...this.state.persons[personIndex]
+    };
+    person.name = event.target.value;
+    const persons = [...this.state.persons];
+    persons[personIndex] = person;
     this.setState(
       {
-        persons: [
-          { name: event.target.value, age: 23 },
-        ]
+        persons: persons
       }
-    ) 
+    );
   }
   tooglePersonsHandler = () => {
     const doesShow = this.state.showPersons;
@@ -54,19 +55,15 @@ class App extends Component {
     if(this.state.showPersons) {
       persons = (
         <div>
-          {this.state.persons.map((item) => {
-            return <Person 
+          {this.state.persons.map((item, index) => {
+            return <Person
+            click={() => this.deletePersonHandler(index)}
             name={item.name} 
             age={item.age}
+            key={item.id}
+            changed={(event) => this.nameChangedHandler(event, item.id)}
             />
           })}
-          {/* <Person
-            name={this.state.persons[0].name} age={this.state.persons[0].age}
-            click={this.switchNameHandler.bind(this, 'Владислав')}
-            chenged={this.nameChangedHandler}
-          >
-            Vlad S
-          </Person> */}
         </div>
       );
     }
